@@ -17,6 +17,8 @@ sys.path.append(".")
 import RTC
 import OpenRTM_aist
 
+import numpy as np
+
 
 # Import Service implementation class
 # <rtc-template block="service_impl">
@@ -156,7 +158,7 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 	#	#
 	#def onActivated(self, ec_id):
 	#
-	#	return RTC.RTC_OK
+	#        return RTC.RTC_OK
 	
 	#	##
 	#	#
@@ -182,9 +184,23 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 	#	# @return RTC::ReturnCode_t
 	#	#
 	#	#
-	#def onExecute(self, ec_id):
-	#
-	#	return RTC.RTC_OK
+        dt = 0
+        oldTime = RTC.Time(0, 0)
+	def onExecute(self, ec_id):
+	    if self._targetVelIn.isNew():
+                self._targetVelIn.read()
+
+                dt = self._d_targetVelIn.tm - oldTime
+                oldTime = self._d_targetVelIn.tm
+
+                self._d_currentPose.heading = self._d_targetVel.data.va*dt + self._d_currentPose.heading
+
+                self._d_currentPose.data.x = self._d_targetVel.data.vx*dt*np.cos(self._d_currentPose.heading) + self._d_currentPose.data.x
+                self._d_currentPose.data.y = self._d_targetVel.data.vx*dt*np.sin(self._d_currentPose.heading) + self._d_currentPose.data.y
+                
+                self.currentPose.Out.write()
+                
+	    return RTC.RTC_OK
 	
 	#	##
 	#	#
