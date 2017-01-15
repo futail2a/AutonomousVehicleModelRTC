@@ -116,8 +116,8 @@ The ports provided by the component are described below:
 =============== =========== ============================== =======
 Name            Type        Data type                      Purpose
 =============== =========== ============================== =======
-targetVel       InPort      RTC::TimedVector2D             
-currentPose     OutPort     RTC::Pose2D                    
+targetVel       InPort      RTC::TimedVelocity2D           
+currentPose     OutPort     RTC::TimedPose2D               
 =============== =========== ============================== =======
 
 Examples

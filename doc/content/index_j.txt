@@ -108,8 +108,8 @@ AutonomousVehicleModelRTCは ``AutonomousVehicleModelRTCComp`` を実行（ ``${
 =============== =========== ============================== ====
 ポート名        ポート型    データ型                       意味
 =============== =========== ============================== ====
-targetVel       InPort      RTC::TimedVector2D             
-currentPose     OutPort     RTC::Pose2D                    
+targetVel       InPort      RTC::TimedVelocity2D           
+currentPose     OutPort     RTC::TimedPose2D               
 =============== =========== ============================== ====
 
 例

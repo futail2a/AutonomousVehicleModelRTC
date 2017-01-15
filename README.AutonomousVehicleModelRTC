@@ -8,9 +8,9 @@
 
 #   rtc-template -bpython --module-name=AutonomousVehicleModelRTC 
 #   --module-desc='ModuleDescription' --module-version=1.0.0 --module-vendor=Tao Asato 
-#   --module-category=Category --module-comp-type=STATIC 
-#   --module-act-type=PERIODIC --module-max-inst=1 
-#   --inport=targetVel:RTC::TimedVector2D --outport=currentPose:RTC::Pose2D 
+#   --module-category=Category --module-comp-type=UNIQUE 
+#   --module-act-type=SPORADIC --module-max-inst=1 
+#   --inport=targetVel:RTC::TimedVelocity2D --outport=currentPose:RTC::TimedPose2D 
 
 
 ======================================================================
@@ -23,8 +23,8 @@ Version:     1.0.0
 Vendor:      Tao Asato
 Category:    Category
 Kind:        DataFlowComponent
-Comp. Type:  STATIC
-Act. Type:   PERIODIC
+Comp. Type:  UNIQUE
+Act. Type:   SPORADIC
 MAX Inst.:   1
 Lang:        Python
 Lang Type:   
@@ -69,7 +69,7 @@ Lang Type:
 	PortNumber:  0
 	Description: 
 	PortType: 
-	DataType:    RTC::TimedVector2D
+	DataType:    RTC::TimedVelocity2D
 	MaxOut: 
 	[Data Elements]
 		Name:
@@ -95,7 +95,7 @@ Lang Type:
 	PortNumber:  0
 	Description: 
 	PortType: 
-	DataType:    RTC::Pose2D
+	DataType:    RTC::TimedPose2D
 	MaxOut: 
 	[Data Elements]
 		Name:
