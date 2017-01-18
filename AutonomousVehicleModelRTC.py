@@ -58,12 +58,13 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 		OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
 		targetVel_arg = [None] * ((len(RTC._d_TimedVelocity2D) - 4) / 2)
-		self._d_targetVel = RTC.TimedVelocity2D(*targetVel_arg)
+		self._d_targetVel = RTC.TimedVelocity2D(RTC.Time(0,0), RTC.Velocity2D(0.0,0.0,0.0))
 		"""
 		"""
 		self._targetVelIn = OpenRTM_aist.InPort("targetVel", self._d_targetVel)
 		currentPose_arg = [None] * ((len(RTC._d_TimedPose2D) - 4) / 2)
-		self._d_currentPose = RTC.TimedPose2D(*currentPose_arg)
+		self._d_currentPose = RTC.TimedPose2D(RTC.Time(0,0), RTC.Pose2D(RTC.Point2D(0.0,0.0), 0.0)
+)
 		"""
 		"""
 		self._currentPoseOut = OpenRTM_aist.OutPort("currentPose", self._d_currentPose)
@@ -155,9 +156,9 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 	#	#
 	#	#
 	def onActivated(self, ec_id):
-		self._d_currentPose.heading = 0.0
-		self._d_currentPose.position.x = 0.0
-		self._d_currentPose.position.y = 0.0
+		self._d_currentPose.data.heading = 0.0
+		self._d_currentPose.data.position.x = 0.0
+		self._d_currentPose.data.position.y = 0.0
 	
 		return RTC.RTC_OK
 	
@@ -193,12 +194,11 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 			dt = self._d_targetVel.tm - oldTime
 			oldTime = self._d_targetVel.tm
 
-			self._d_currentPose.heading = self._d_targetVel.data.va*dt + self._d_currentPose.heading
-			self._d_currentPose.position.x = self._d_targetVel.data.vx*dt*np.cos(self._d_currentPose.heading) + self._d_currentPose.position.x
-			self._d_currentPose.position.y = self._d_targetVel.data.vx*dt*np.sin(self._d_currentPose.heading) + self._d_currentPose.position.y
+			self._d_currentPose.data.heading = self._d_targetVel.data.va*dt + self._d_currentPose.heading
+			self._d_currentPose.data.position.x = self._d_targetVel.data.vx*dt*np.cos(self._d_currentPose.heading) + self._d_currentPose.position.x
+			self._d_currentPose.data.position.y = self._d_targetVel.data.vx*dt*np.sin(self._d_currentPose.heading) + self._d_currentPose.position.y
 
-		print ("debug")
-		self._curerntPoseOut.write()
+		self._currentPoseOut.write()
 		return RTC.RTC_OK
 	
 	#	##
