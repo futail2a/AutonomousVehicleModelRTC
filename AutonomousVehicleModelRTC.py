@@ -16,7 +16,7 @@ sys.path.append(".")
 # Import RTM module
 import RTC
 import OpenRTM_aist
-
+import numpy as np
 
 # Import Service implementation class
 # <rtc-template block="service_impl">
@@ -155,33 +155,12 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 	#	#
 	#	#
 	def onActivated(self, ec_id):
-                self._d_currentPose.heading = 0.0
-                self._d_currentPose.position.x = 0.0
-                self._d_currentPose.position.y = 0.0
-		return RTC.RTC_OK
-
-	#	##
-	#	#
-	#	# The deactivated action (Active state exit action)
-	#	# former rtc_active_exit()
-	#	#
-	#	# @param ec_id target ExecutionContext Id
-	#	#
-	#	# @return RTC::ReturnCode_t
-	#	#
-	#	#
+		self._d_currentPose.heading = 0.0
+		self._d_currentPose.position.x = 0.0
+		self._d_currentPose.position.y = 0.0
 	
-	#	##
-	#	#
-	#	# The execution action that is invoked periodically
-	#	# former rtc_active_do()
-	#	#
-	#	# @param ec_id target ExecutionContext Id
-	#	#
-	#	# @return RTC::ReturnCode_t
-	#	#
-	#	#
-
+		return RTC.RTC_OK
+	
 	#	##
 	#	#
 	#	# The deactivated action (Active state exit action)
@@ -206,21 +185,20 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 	#	# @return RTC::ReturnCode_t
 	#	#
 	#	#
-        dt = 0
-        oldTime =RTC.Time(0,0)
+	dt = 0
+	oldTime = RTC.Time(0.0,0.0)
 	def onExecute(self, ec_id):
-                if self._targetVelIn.isNew():
-                        self._targetVelIn.read()
+		if self._targetVelIn.isNew():
+			self._targetVelIn.read()
+			dt = self._d_targetVel.tm - oldTime
+			oldTime = self._d_targetVel.tm
 
-                        dt = self._d_targetVel.tm -oldTime
-                        oldTime = self._d_targetVel.tm
+			self._d_currentPose.heading = self._d_targetVel.data.va*dt + self._d_currentPose.heading
+			self._d_currentPose.position.x = self._d_targetVel.data.vx*dt*np.cos(self._d_currentPose.heading) + self._d_currentPose.position.x
+			self._d_currentPose.position.y = self._d_targetVel.data.vx*dt*np.sin(self._d_currentPose.heading) + self._d_currentPose.position.y
 
-                        self._d_currentPose.heading = self._d_targetVel.data.va*dt + self._d_currentPose.heading
-                        self._d_currentPose.position.x = self._d_targetVel.data.vx*dt*np.cos(self._d_currentPose.heading) + self._d_currentPose.position.x
-                        self._d_currentPose.position.y = self._d_targetVel.data.vx*dt*np.sin(self._d_currentPose.heading) + self._d_currentPose.position.y
-                     
-                print ("debug")
-                self._curerntPoseOut.write()
+		print ("debug")
+		self._curerntPoseOut.write()
 		return RTC.RTC_OK
 	
 	#	##
