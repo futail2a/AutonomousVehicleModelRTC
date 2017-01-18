@@ -191,13 +191,18 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 	def onExecute(self, ec_id):
 		if self._targetVelIn.isNew():
 			buf = self._targetVelIn.read()
-                        print(self._d_targetVel.data.va)
-			self._dt = self._d_targetVel.tm.sec - self._oldTime
-			self._oldTime = self._d_targetVel.tm.sec
-			self._d_currentPose.data.heading = self._d_targetVel.data.va*self._dt + self._d_currentPose.data.heading
-			self._d_currentPose.data.position.x = self._d_targetVel.data.vx*self._dt*np.cos(self._d_currentPose.data.heading) + self._d_currentPose.data.position.x
-			self._d_currentPose.data.position.y = self._d_targetVel.data.vx*self._dt*np.sin(self._d_currentPose.data.heading) + self._d_currentPose.data.position.y
+			self._dt = buf.tm.nsec - self._oldTime
+			self._oldTime = buf.tm.nsec
 
+                        self._dt = self._dt * 0.000000001
+			
+			self._d_currentPose.data.heading = buf.data.va*self._dt + self._d_currentPose.data.heading
+			self._d_currentPose.data.position.x = buf.data.vx*self._dt*np.cos(self._d_currentPose.data.heading) + self._d_currentPose.data.position.x
+			self._d_currentPose.data.position.y = buf.data.vx*self._dt*np.sin(self._d_currentPose.data.heading) + self._d_currentPose.data.position.y
+
+                print(self._d_currentPose.data.position.x)
+                print(self._d_currentPose.data.position.y)                
+                print()
 		self._currentPoseOut.write()
 		return RTC.RTC_OK
 	
