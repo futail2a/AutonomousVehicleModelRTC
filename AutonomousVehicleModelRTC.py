@@ -194,11 +194,12 @@ class AutonomousVehicleModelRTC(OpenRTM_aist.DataFlowComponentBase):
 			self._dt = buf.tm.nsec - self._oldTime
 			self._oldTime = buf.tm.nsec
 
-                        self._dt = self._dt * 0.000000001
+                        #self._dt = float(self._dt * 10**(-9))
+			self._dt =0.1
 			
 			self._d_currentPose.data.heading = buf.data.va*self._dt + self._d_currentPose.data.heading
-			self._d_currentPose.data.position.x = buf.data.vx*self._dt*np.cos(self._d_currentPose.data.heading) + self._d_currentPose.data.position.x
-			self._d_currentPose.data.position.y = buf.data.vx*self._dt*np.sin(self._d_currentPose.data.heading) + self._d_currentPose.data.position.y
+			self._d_currentPose.data.position.x = buf.data.vx*self._dt* np.cos(self._d_currentPose.data.heading) + (buf.data.vx**2)*self._dt* np.cos(self._d_currentPose.data.heading) + self._d_currentPose.data.position.x
+			self._d_currentPose.data.position.y = buf.data.vx*self._dt* np.sin(self._d_currentPose.data.heading) + (buf.data.vx**2)*self._dt* np.sin(self._d_currentPose.data.heading) + self._d_currentPose.data.position.y
 
                 print(self._d_currentPose.data.position.x)
                 print(self._d_currentPose.data.position.y)                
